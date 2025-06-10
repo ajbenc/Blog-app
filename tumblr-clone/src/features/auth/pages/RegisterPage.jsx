@@ -14,7 +14,6 @@ export default function RegisterPage() {
       <div className={`w-full max-w-sm transition-all duration-500 ${showAnimation ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
         {/* Tumblr-style logo */}
         <div className="text-center mb-6">
-
           <h1 className="text-2xl font-bold text-white">
             <span className="text-[#3b82f6]">B</span>logMaster
           </h1>
@@ -56,9 +55,9 @@ export default function RegisterPage() {
           </div>
         </div>
         
-        {/* Footer - Simplified */}
+        {/* Footer */}
         <div className="text-center mt-6 text-gray-500 text-xs">
-          &copy; 2025 BlogMaster
+          &copy; {new Date().getFullYear()} BlogMaster
         </div>
       </div>
     </div>
