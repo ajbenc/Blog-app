@@ -198,6 +198,9 @@ export function AuthProvider({ children }) {
                             }
                         } catch (error) {
                             // Use fallback without logging errors
+                            console.log('====================================');
+                            console.log(error);
+                            console.log('====================================');
                             console.info("API validation failed, using stored user data");
                             handleUserFallback(storedUser, cachedProfile);
                         }
@@ -264,11 +267,17 @@ export function AuthProvider({ children }) {
                 const updatedUser = {...response.data, ...data};
                 return updateUser(updatedUser);
             } catch (apiError) {
+                console.log('====================================');
+                console.log(apiError);
+                console.log('====================================');
                 console.info("API profile update failed, using local storage");
                 return updateUser(data);
             }
         } catch (error) {
             // Fallback to local update
+            console.log('====================================');
+            console.log(error);
+            console.log('====================================');
             console.info("Profile update error, using local storage fallback");
             return updateUser(data);
         }
@@ -378,6 +387,9 @@ export function AuthProvider({ children }) {
                         headers: { Authorization: `Bearer ${token}` }
                     });
                 } catch (error) {
+                    console.log('====================================');
+                    console.log(error);
+                    console.log('====================================');
                     // Silently continue with localStorage approach
                     console.info("API follow failed, using local storage");
                 }
@@ -397,6 +409,7 @@ export function AuthProvider({ children }) {
             
             return true;
         } catch (error) {
+            console.log(error);       
             console.info("Follow user error, using local storage fallback");
             return false;
         }
@@ -414,6 +427,7 @@ export function AuthProvider({ children }) {
                         headers: { Authorization: `Bearer ${token}` }
                     });
                 } catch (error) {
+                    console.log(error);
                     // Silently continue with localStorage approach
                     console.info("API unfollow failed, using local storage");
                 }
@@ -429,6 +443,7 @@ export function AuthProvider({ children }) {
             
             return true;
         } catch (error) {
+            console.log(error);       
             console.info("Unfollow user error, using local storage fallback");
             return false;
         }
@@ -446,6 +461,7 @@ export function AuthProvider({ children }) {
             const followedIds = JSON.parse(localStorage.getItem("followedUserIds") || "[]");
             return followedIds.includes(userId);
         } catch (e) {
+            console.error("Error checking if user is followed:", e);
             return false;
         }
     };

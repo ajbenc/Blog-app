@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
-import { usePosts } from "../hooks/usePosts.js";
+import { useAuth } from "../../auth/hooks/useAuth";
+import { usePostsQuery } from "../../../hooks/usePostsQuery";
 import PostTypeBar from "../components/PostTypeBar.jsx";
 import PostCard from "../components/PostCard.jsx";
 import { useTumblrFeed } from "../../tumblr/hooks/useTumblrFeed";
@@ -8,11 +9,14 @@ import ConnectSidebar from "./ConnectSidebar.jsx";
 const trendingTags = ["art", "music", "design", "photography", "fashion"];
 
 export default function DashBoardPage () {
-    const { posts, loading, addPost, toggleLike, addComment, doRepost, editPost } = usePosts();
+    const { token } = useAuth();
     const [selectedTag, setSelectedTag] = useState(null);
 
+    // Fetch local posts with React Query
+    const { data: posts = [], isLoading: loading } = usePostsQuery(token);
+
     // Fetch Tumblr posts
-    const { posts: tumblrPosts, loading: tumblrLoading } = useTumblrFeed(
+    const { posts: tumblrPosts = [], loading: tumblrLoading } = useTumblrFeed(
         selectedTag ? null : "staff.tumblr.com",
         selectedTag ? { tag: selectedTag } : { limit: 10 }
     );
@@ -51,36 +55,12 @@ export default function DashBoardPage () {
                     </div>
                 </div>
                 
-                <div className="bg-[#1a1a1a] rounded-lg shadow-lg p-4 mt-6 border border-[#2f2f2f] hover:border-[#363636] transition-colors">
-                    <h2 className="text-lg font-bold mb-4 text-[#ffffff]">Search Blogs</h2>
-                    <form
-                        onSubmit={e => {
-                            e.preventDefault();
-                            const tag = e.target.elements.tag.value.trim();
-                            if (tag) setSelectedTag(tag);
-                        }}
-                        className="flex items-center justify-center max-w-sm mx-auto"
-                    >
-                        <input
-                            name="tag"
-                            placeholder="Search tag…"
-                            className="w-full bg-[#252525] border border-[#2f2f2f] rounded-l px-3 py-1.5 text-sm text-gray-100 placeholder-gray-400 focus:border-blue-500 hover:border-[#363636] transition-colors"
-                        />
-                        <button
-                            type="submit"
-                            className="bg-[#303030] text-white px-3 py-1.5 text-sm rounded-r hover:bg-[#404040] hover:scale-105 transition-all duration-200"
-                        >
-                            Go
-                        </button>
-                    </form>
-                </div>
-                
                 <ConnectSidebar />
             </aside>
             
             {/* Main Feed */}
             <main className="flex-1">
-                <PostTypeBar addPost={addPost} />
+                <PostTypeBar /* addPost={addPost} (mutations will be added soon) */ />
                 
                 {loading && tumblrLoading ? (
                     <p className="text-center text-gray-300">Loading...</p>
@@ -90,19 +70,13 @@ export default function DashBoardPage () {
                             <PostCard
                                 key={post._id}
                                 post={post}
-                                onLike={toggleLike}
-                                onComment={addComment}
-                                onRepost={doRepost}
-                                onEdit={editPost}
+                                // onLike, onComment, etc. will be updated with mutations
                             />
                         ) : (
                             <PostCard
                                 key={post.id || post._id}
                                 post={post}
                                 isTumblr={post._source === "tumblr"}
-                                onLike={toggleLike}
-                                onComment={addComment}
-                                onRepost={doRepost}
                             />
                         )
                     )

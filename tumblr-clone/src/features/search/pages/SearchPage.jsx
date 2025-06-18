@@ -1,5 +1,6 @@
 import { useSearchParams } from 'react-router-dom';
-import { usePosts } from '../../posts/hooks/usePosts';
+import { usePostsQuery } from '../../../hooks/usePostsQuery';
+import { useAuth } from "../../auth/hooks/useAuth";
 import PostCard from '../../posts/components/PostCard';
 import { useTumblrFeed } from '../../tumblr/hooks/useTumblrFeed';
 import { useMemo } from 'react';
@@ -7,7 +8,8 @@ import { useMemo } from 'react';
 export default function SearchPage() {
   const [params] = useSearchParams();
   const query = params.get('query')?.toLowerCase() || '';
-  const { posts, loading } = usePosts();
+  const { token } = useAuth();
+  const { data: posts = [], isLoading: loading } = usePostsQuery(token);
 
   // Tumblr search
   const isTag = query.startsWith('#');

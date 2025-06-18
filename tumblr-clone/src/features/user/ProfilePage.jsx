@@ -1,15 +1,16 @@
+import { usePostsQuery } from "../../hooks/usePostsQuery";
 import { useAuth } from "../auth/hooks/useAuth.js";
 import { useState } from "react";
-import { usePosts } from "../posts/hooks/usePosts.js";
+import { useTumblrFeed } from "../tumblr/hooks/useTumblrFeed";
 import ProfileSettings from "./ProfileSettings.jsx";
 import UserPosts from "./UserPosts.jsx";
-import { FaPencilAlt, FaChevronRight, FaChevronLeft, FaCog } from "react-icons/fa";
-import { useTumblrFeed } from "../tumblr/hooks/useTumblrFeed";
 import FollowButton from "../../components/buttons/FollowButton.jsx";
+import { FaPencilAlt, FaChevronRight, FaChevronLeft, FaCog } from "react-icons/fa";
 
 export default function ProfilePage({ viewUser = null }) {
     const { user } = useAuth();
-    const { posts, loading } = usePosts();
+    const { token } = useAuth();
+    const { data: posts = [], isLoading: loading } = usePostsQuery(token);
     const { posts: tumblrPosts } = useTumblrFeed("staff.tumblr.com", { limit: 20 });
     const [tab, setTab] = useState("profile");
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);

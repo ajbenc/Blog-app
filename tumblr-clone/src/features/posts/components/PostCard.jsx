@@ -1,6 +1,12 @@
 import PropTypes from "prop-types";
 import { useState, useRef, useEffect } from "react";
-import { useAuth } from "../../auth/hooks/useAuth.js";
+import { useAuth } from "../../auth/hooks/useAuth";
+import {
+  useLikePostMutation,
+  useCommentPostMutation,
+  useRepostPostMutation,
+  useEditPostMutation
+} from "../../../hooks/usePostsQuery";
 import { FaHeart, FaRegCommentDots, FaRetweet, FaPencilAlt, FaTimes } from "react-icons/fa";
 
 function getTumblrSimState(postId) {
@@ -15,10 +21,6 @@ function setTumblrSimState(postId, state) {
 
 export default function PostCard({
     post,
-    onLike,
-    onComment,
-    onRepost,
-    onEdit,
     isTumblr = false,
 }) {
     // Add debug logging
@@ -31,7 +33,7 @@ export default function PostCard({
         isTumblr
     });
 
-    const {user} = useAuth();
+    const { token, user } = useAuth();
     const [showComment, setShowComment] = useState(false);
     const commentRef = useRef();
 
@@ -43,8 +45,15 @@ export default function PostCard({
     // Simulated state for Tumblr posts
     const [sim, setSim] = useState(isTumblr ? getTumblrSimState(post.id) : {});
 
+    // Like mutation
+    const { mutate: likePost, isLoading: liking } = useLikePostMutation(token);
+    const { mutate: commentPost } = useCommentPostMutation(token);
+    const { mutate: repostPost } = useRepostPostMutation(token);
+    const { mutate: editPost } = useEditPostMutation(token);
+
     // Handlers
     const handleLike = () => {
+      if (!isTumblr) likePost(post._id);
       if (isTumblr) {
         const alreadyLiked = sim.likedBy?.includes(user?._id);
         const updated = {
@@ -56,11 +65,10 @@ export default function PostCard({
         };
         setSim(updated);
         setTumblrSimState(post.id, updated);
-      } else {
-        onLike(post._id);
-      }
+      } 
     };
     const handleRepost = () => {
+      if (!isTumblr) repostPost(post._id);
       if (isTumblr) {
         const alreadyReposted = sim.repostedBy?.includes(user?._id);
         const updated = {
@@ -72,41 +80,50 @@ export default function PostCard({
         };
         setSim(updated);
         setTumblrSimState(post.id, updated);
-      } else {
-        onRepost(post._id);
-      }
+      } 
     };
     const handleCommentToggle = () => setShowComment(prev => !prev);
     const handleCommentSubmit = (e) => {
       e.preventDefault();
       const text = commentRef.current.value.trim();
-      if (text) {
-        if (isTumblr) {
-          const updated = {
-            ...sim,
-            comments: [
-              ...sim.comments,
-              { user: { name: user.name, avatar: user.avatar }, text }
-            ]
-          };
-          setSim(updated);
-          setTumblrSimState(post.id, updated);
-        } else {
-          onComment(post._id, text);
-        }
+      if (text && !isTumblr) {
+        commentPost({ postId: post._id, text });
+        commentRef.current.value = '';
+      }
+      if (text && isTumblr) {
+        const updated = {
+          ...sim,
+          comments: [
+            ...sim.comments,
+            { user: { name: user.name, avatar: user.avatar }, text }
+          ]
+        };
+        setSim(updated);
+        setTumblrSimState(post.id, updated);
         commentRef.current.value = '';
       }
     };
 
     // Edit handlers
     const handleEditSave = () => {
-      const tagsArray = editTags
-        .split(" ")
-        .map(t => t.trim())
-        .filter(t => t.startsWith("#"))
-        .map(t => t.replace(/^#/, "").toLowerCase());
-      onEdit(post._id, { content: editContent, tags: tagsArray });
-      setEditing(false);
+      if (!isTumblr) {
+        const tagsArray = editTags
+          .split(" ")
+          .map(t => t.trim())
+          .filter(t => t.startsWith("#"))
+          .map(t => t.replace(/^#/, "").toLowerCase());
+        editPost({ postId: post._id, data: { content: editContent, tags: tagsArray } });
+        setEditing(false);
+      }
+      if (isTumblr) {
+        const tagsArray = editTags
+          .split(" ")
+          .map(t => t.trim())
+          .filter(t => t.startsWith("#"))
+          .map(t => t.replace(/^#/, "").toLowerCase());
+        onEdit(post._id, { content: editContent, tags: tagsArray });
+        setEditing(false);
+      }
     };
 
     // Tumblr post user info
@@ -324,7 +341,9 @@ export default function PostCard({
             {/* Action buttons */}
             <div className="flex space-x-6 text-gray-400">
               <button onClick={handleLike} 
-                className="flex items-center space-x-2 hover:text-pink-500 hover:scale-105 transition-all duration-200">
+                className="flex items-center space-x-2 hover:text-pink-500 hover:scale-105 transition-all duration-200"
+                disabled={liking}
+              >
                 <FaHeart className={isTumblr ? (sim.likes > 0 ? "text-pink-500" : "") : (post.likes.includes(user?._id) ? "text-pink-500" : "")} />
                 <span>{isTumblr ? sim.likes : (post.likesCount ?? post.likes.length)}</span>
               </button>
@@ -374,9 +393,5 @@ export default function PostCard({
 
 PostCard.propTypes = {
   post: PropTypes.object.isRequired,
-  onLike: PropTypes.func,
-  onComment: PropTypes.func,
-  onRepost: PropTypes.func,
-  onEdit: PropTypes.func, // <-- add this prop type
   isTumblr: PropTypes.bool,
 };

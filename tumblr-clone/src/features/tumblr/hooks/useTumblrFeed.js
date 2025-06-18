@@ -8,9 +8,14 @@ export function useTumblrFeed(blog, options = {}) {
 
   useEffect(() => {
     setLoading(true);
-    const fetch = options.tag
-      ? getTumblrTagged(options.tag, options)
-      : getTumblrBlogPosts(blog, options);
+    let fetch;
+    if (options.tag) {
+      // Remove tag from options before passing as params
+      const { tag, ...rest } = options;
+      fetch = getTumblrTagged(tag, rest);
+    } else {
+      fetch = getTumblrBlogPosts(blog, options);
+    }
     fetch
       .then(data => {
         setPosts(Array.isArray(data.posts) ? data.posts : data); // tagged returns array directly

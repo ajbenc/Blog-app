@@ -30,3 +30,9 @@ export async function fetchTaggedPosts(tag, options = {}) {
   const { data } = await axios.get(url, { params });
   return data.response;
 }
+
+export const getTumblrTagged = async (tag, options = {}) => {
+  const url = `/tumblr/tag/${tag}`;
+  const { data } = await api.get(url, { params: options });
+  return data;
+};
