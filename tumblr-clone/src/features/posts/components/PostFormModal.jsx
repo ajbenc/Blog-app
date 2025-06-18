@@ -2,10 +2,12 @@ import { useRef, useState, useEffect } from 'react';
 import { FaImage, FaVideo, FaLink, FaFont, FaTimes, FaChevronDown } from 'react-icons/fa';
 import PropTypes from 'prop-types';
 import { useAuth } from '../../auth/hooks/useAuth';
+import { useCreatePostMutation } from '../../../hooks/usePostsQuery';
 
-export default function PostFormModal({ initialType, onClose, addPost }) {
-  const { user } = useAuth();
-  
+export default function PostFormModal({ initialType, onClose }) {
+  const { token, user } = useAuth();
+  const { mutate: createPost, isLoading, isError, error: mutationError } = useCreatePostMutation(token);
+
   const [type, setType] = useState(initialType || "text");
   const [content, setContent] = useState("");
   const [mediaFiles, setMediaFiles] = useState([]);
@@ -14,6 +16,7 @@ export default function PostFormModal({ initialType, onClose, addPost }) {
   const [uploading, setUploading] = useState(false);
   const [tags, setTags] = useState(""); 
   const [privacy, setPrivacy] = useState("everyone");
+  const [localError, setLocalError] = useState("");
 
   const modalRef = useRef();
   const imageInputRef = useRef();
@@ -80,10 +83,10 @@ export default function PostFormModal({ initialType, onClose, addPost }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
-    
+    setLocalError("");
+
     if (type === "text" && !content.trim()) {
-      setError("Content cannot be empty.");
+      setLocalError("Content cannot be empty.");
       return;
     }
 
@@ -94,23 +97,24 @@ export default function PostFormModal({ initialType, onClose, addPost }) {
         .filter(t => t.startsWith("#") || t.length > 0)
         .map(t => t.startsWith("#") ? t.replace(/^#/, "") : t)
         .filter(t => t.length > 0);
-      
+
       const postData = {
         type: mediaFiles.length > 0 ? mediaFiles[0].type : "text",
         content,
-        tags: tagsArray
+        tags: tagsArray,
+        mediaFiles: mediaFiles.length > 0 ? mediaFiles : undefined,
       };
 
-      if (mediaFiles.length > 0) {
-        postData.mediaUrl = mediaFiles[0].url;
-        postData.mediaFiles = mediaFiles;
-      }
-
-      await addPost(postData);
-      onClose();
+      createPost(postData, {
+        onSuccess: () => {
+          onClose();
+        },
+        onError: (err) => {
+          setLocalError("Failed to create post: " + (err.message || "Unknown error"));
+        }
+      });
     } catch (err) {
-      console.error('Error creating post:', err);
-      setError("Failed to create post: " + (err.message || "Unknown error"));
+      setLocalError("Failed to create post: " + (err.message || "Unknown error"));
     }
   };
 
@@ -320,5 +324,4 @@ export default function PostFormModal({ initialType, onClose, addPost }) {
 PostFormModal.propTypes = {
   initialType: PropTypes.string,
   onClose: PropTypes.func.isRequired,
-  addPost: PropTypes.func.isRequired
 };

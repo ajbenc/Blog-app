@@ -1,23 +1,35 @@
 import { useAuth } from "../../auth/hooks/useAuth.js";
 import { useState, useEffect } from "react";
-import { usePosts } from "../../posts/hooks/usePosts.js";
+import { usePostsQuery } from "../../../hooks/usePostsQuery";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { FaSpinner } from "react-icons/fa";
 import { useTumblrFeed } from "../../tumblr/hooks/useTumblrFeed";
+import {
+  useLikeTumblrMutation,
+  useUnlikeTumblrMutation,
+  useRepostTumblrMutation,
+  useUnrepostTumblrMutation
+} from '../../tumblr/hooks/useTumblrActions';
 
 // Import the actual profile page component
 import UserProfile from "../../user/ProfilePage.jsx";
 
+
 export default function ProfilePage() {
   const { userId } = useParams();
-  const { user, token } = useAuth();
-  const { posts, loading } = usePosts();
+  const { token } = useAuth();
+  const { data: posts = [], isLoading: loading } = usePostsQuery(token); 
   const { posts: tumblrPosts } = useTumblrFeed("staff.tumblr.com", { limit: 10 });
   const [viewedUser, setViewedUser] = useState(null);
   const [loadingUser, setLoadingUser] = useState(false);
   const [error, setError] = useState(null);
   
+  const likeTumblr = useLikeTumblrMutation(token);
+  const unlikeTumblr = useUnlikeTumblrMutation(token);
+  const repostTumblr = useRepostTumblrMutation(token);
+  const unrepostTumblr = useUnrepostTumblrMutation(token);
+
   // If we have a userId param, we're viewing someone else's profile
   // Otherwise, we're viewing our own
   const isOwnProfile = !userId;

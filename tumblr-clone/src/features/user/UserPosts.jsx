@@ -40,20 +40,20 @@ export default function UserPosts({ user, posts, loading, tumblrPosts = [] }) {
 
             <h3 className="text-xl font-semibold mt-6 mb-2">Liked Posts</h3>
             {[...likedPosts, ...tumblrLiked].length ? (
-                [...likedPosts, ...tumblrLiked].map(post =>
-                  <PostCard key={post._id || post.id} post={post} isTumblr={!!post.id} />
-                )
+              [...likedPosts, ...tumblrLiked].map(post =>
+                <PostCard key={post._id || post.id} post={post} isTumblr={!!post.id} />
+              )
             ) : (
-                <p className="text-gray-500">No liked posts yet.</p>
+              <p className="text-gray-500">No liked posts yet.</p>
             )}
 
             <h3 className="text-xl font-semibold mt-6 mb-2">Reposted Posts</h3>
             {[...repostedPosts, ...tumblrReposted].length ? (
-                [...repostedPosts, ...tumblrReposted].map(post =>
-                  <PostCard key={post._id || post.id} post={post} isTumblr={!!post.id} />
-                )
+              [...repostedPosts, ...tumblrReposted].map(post =>
+                <PostCard key={post._id || post.id} post={post} isTumblr={!!post.id} />
+              )
             ) : (
-                <p className="text-gray-500">No reposted posts yet.</p>
+              <p className="text-gray-500">No reposted posts yet.</p>
             )}
         </>
     );

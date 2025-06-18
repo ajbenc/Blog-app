@@ -23,8 +23,10 @@ const userSchema = new mongoose.Schema({
   },
   profileBg: {
   type: String,
-  default: "" // or a default image URL if you want
+  default: ""  
   },
+  likedTumblrPosts: [{type: String}],  
+  repostedTumblrPosts: [{type: String}],  
   following: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   bio: { type: String, default: "" },
   website: { type: String, default: "" },

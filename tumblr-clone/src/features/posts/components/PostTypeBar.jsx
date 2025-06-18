@@ -3,7 +3,7 @@ import { FaFont, FaImage, FaVideo, FaLink, FaQuoteLeft, FaCode } from 'react-ico
 import PostFormModal from './PostFormModal';
 import PropTypes from 'prop-types';
 
-export default function PostTypeBar({ addPost }) {
+export default function PostTypeBar() {
   const [showModal, setShowModal] = useState(false);
   const [selectedType, setSelectedType] = useState("text");
 
@@ -70,7 +70,6 @@ export default function PostTypeBar({ addPost }) {
         <PostFormModal 
           initialType={selectedType}
           onClose={() => setShowModal(false)} 
-          addPost={addPost} // Pass addPost to the modal
         />
       )}
     </>

@@ -181,4 +181,73 @@ export const getFollowedUsers = async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
-};
+}
+
+// Like a Tumblr post
+export async function likeTumblrPost(req, res) {
+  try {
+    const user = await User.findById(req.user.id);
+    const { tumblrPostId } = req.body;
+    if (!user.likedTumblrPosts.includes(tumblrPostId)) {
+      user.likedTumblrPosts.push(tumblrPostId);
+      await user.save();
+    }
+    res.json({ likedTumblrPosts: user.likedTumblrPosts });
+  } catch (err) {
+    res.status(500).json({ message: "Error liking Tumblr post" });
+  }
+}
+
+// Repost a Tumblr post
+export async function repostTumblrPost(req, res) {
+  try {
+    const user = await User.findById(req.user.id);
+    const { tumblrPostId } = req.body;
+    if (!user.repostedTumblrPosts.includes(tumblrPostId)) {
+      user.repostedTumblrPosts.push(tumblrPostId);
+      await user.save();
+    }
+    res.json({ repostedTumblrPosts: user.repostedTumblrPosts });
+  } catch (err) {
+    res.status(500).json({ message: "Error reposting Tumblr post" });
+  }
+}
+
+// Get user's Tumblr likes/reposts
+export async function getTumblrActions(req, res) {
+  try {
+    const user = await User.findById(req.user.id);
+    res.json({
+      likedTumblrPosts: user.likedTumblrPosts || [],
+      repostedTumblrPosts: user.repostedTumblrPosts || []
+    });
+  } catch (err) {
+    res.status(500).json({ message: "Error fetching Tumblr actions" });
+  }
+}
+
+// Unlike a Tumblr post
+export async function unlikeTumblrPost(req, res) {
+  try {
+    const user = await User.findById(req.user.id);
+    const { tumblrPostId } = req.body;
+    user.likedTumblrPosts = user.likedTumblrPosts.filter(id => id !== tumblrPostId);
+    await user.save();
+    res.json({ likedTumblrPosts: user.likedTumblrPosts });
+  } catch (err) {
+    res.status(500).json({ message: "Error unliking Tumblr post" });
+  }
+}
+
+// Unrepost a Tumblr post
+export async function unrepostTumblrPost(req, res) {
+  try {
+    const user = await User.findById(req.user.id);
+    const { tumblrPostId } = req.body;
+    user.repostedTumblrPosts = user.repostedTumblrPosts.filter(id => id !== tumblrPostId);
+    await user.save();
+    res.json({ repostedTumblrPosts: user.repostedTumblrPosts });
+  } catch (err) {
+    res.status(500).json({ message: "Error unreposting Tumblr post" });
+  }
+}
