@@ -161,6 +161,20 @@ export async function listUsers(req, res) {
     }
 }
 
+export async function getUserById(req, res) {
+    try {
+        const userId = req.params.id;
+        const user = await User.findById(userId, "name email avatar profileBg bio website location themeColor");
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        res.json(user);
+    } catch (err) {
+        console.error("Error fetching user by ID:", err);
+        res.status(500).json({ message: "Error fetching user" });
+    }
+}
+
 
 export const getFollowedUsers = async (req, res) => {
     try {
