@@ -1,13 +1,16 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../auth/hooks/useAuth";
 import axios from "axios";
 import PostCard from "../components/PostCard";
 import { useTumblrFeed } from "../../tumblr/hooks/useTumblrFeed";
+import FollowButton from "../../../components/buttons/FollowButton";
 
 const popularTags = ["art", "photography", "design", "music", "fashion", "travel", "food", "nature", "technology"];
 
 export default function ExplorePage() {
-  const { token } = useAuth();
+  const { token, isUserFollowed } = useAuth();
+  const navigate = useNavigate();
   const [selectedTag, setSelectedTag] = useState("art");
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -100,17 +103,29 @@ export default function ExplorePage() {
           ) : users.length ? (
             <div className="space-y-4">
               {users.map(user => (
-                <div key={user._id} className="flex items-center">
-                  <div className="w-10 h-10 rounded-full overflow-hidden mr-3">
-                    <img 
-                      src={user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}`} 
-                      alt={user.name}
-                      className="w-full h-full object-cover"
-                    />
+                <div 
+                  key={user._id} 
+                  className="flex items-center p-2 rounded-lg hover:bg-[#252525] transition-colors"
+                >
+                  <div 
+                    className="flex items-center flex-1 cursor-pointer"
+                    onClick={() => navigate(`/profile/${user._id}`)}
+                  >
+                    <div className="w-10 h-10 rounded-full overflow-hidden mr-3">
+                      <img 
+                        src={user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}`} 
+                        alt={user.name}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="font-medium text-sm hover:text-blue-400 transition-colors">{user.name}</h4>
+                    </div>
                   </div>
-                  <div className="flex-1">
-                    <h4 className="font-medium text-sm">{user.name}</h4>
-                  </div>
+                  <FollowButton 
+                    userId={user._id}
+                    isFollowing={isUserFollowed ? isUserFollowed(user._id) : false}
+                  />
                 </div>
               ))}
             </div>

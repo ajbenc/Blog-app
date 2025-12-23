@@ -1,5 +1,6 @@
 import PropTypes from "prop-types";
 import { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../auth/hooks/useAuth";
 import {
   useLikePostMutation,
@@ -34,6 +35,7 @@ export default function PostCard({
     });
 
     const { token, user } = useAuth();
+    const navigate = useNavigate();
     const [showComment, setShowComment] = useState(false);
     const commentRef = useRef();
 
@@ -115,15 +117,7 @@ export default function PostCard({
         editPost({ postId: post._id, data: { content: editContent, tags: tagsArray } });
         setEditing(false);
       }
-      if (isTumblr) {
-        const tagsArray = editTags
-          .split(" ")
-          .map(t => t.trim())
-          .filter(t => t.startsWith("#"))
-          .map(t => t.replace(/^#/, "").toLowerCase());
-        onEdit(post._id, { content: editContent, tags: tagsArray });
-        setEditing(false);
-      }
+      // Note: Tumblr posts cannot be edited
     };
 
     // Tumblr post user info
@@ -265,10 +259,16 @@ export default function PostCard({
               <img
                 src={tumblrUser.avatar || "https://ui-avatars.com/api/?name=" + encodeURIComponent(tumblrUser.name || "User")}
                 alt="avatar"
-                className="w-10 h-10 rounded-full object-cover border-2 border-[#2f2f2f] group-hover:border-[#363636] transition-colors"
+                className="w-10 h-10 rounded-full object-cover border-2 border-[#2f2f2f] group-hover:border-[#363636] transition-colors cursor-pointer"
+                onClick={() => !isTumblr && post.user?._id && navigate(`/profile/${post.user._id}`)}
               />
               <div className="ml-3">
-                <div className="font-semibold text-white group-hover:text-blue-400 transition-colors">{tumblrUser.name}</div>
+                <div 
+                  className="font-semibold text-white group-hover:text-blue-400 transition-colors cursor-pointer"
+                  onClick={() => !isTumblr && post.user?._id && navigate(`/profile/${post.user._id}`)}
+                >
+                  {tumblrUser.name}
+                </div>
                 <div className="text-gray-400 text-sm">
                   {new Date(post.createdAt || post.timestamp * 1000).toLocaleString()}
                 </div>

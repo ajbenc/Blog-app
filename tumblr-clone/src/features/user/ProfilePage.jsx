@@ -8,11 +8,10 @@ import FollowButton from "../../components/buttons/FollowButton.jsx";
 import { FaPencilAlt, FaChevronRight, FaChevronLeft, FaCog } from "react-icons/fa";
 
 export default function ProfilePage({ viewUser = null }) {
-    const { user } = useAuth();
+    const { user, isUserFollowed } = useAuth();
     const { token } = useAuth();
     const { data: posts = [], isLoading: loading } = usePostsQuery(token);
     const { posts: tumblrPosts } = useTumblrFeed("staff.tumblr.com", { limit: 20 });
-    const [tab, setTab] = useState("profile");
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
     
     // Use viewUser (when viewing someone else's profile) or the logged-in user
@@ -22,6 +21,9 @@ export default function ProfilePage({ viewUser = null }) {
     
     // Determine if this is the user's own profile
     const isOwnProfile = !viewUser;
+    
+    // Check if the current user is following the viewed user
+    const isFollowing = viewUser && isUserFollowed ? isUserFollowed(viewUser._id) : false;
 
     return (
         <div className="relative min-h-screen">
@@ -99,7 +101,7 @@ export default function ProfilePage({ viewUser = null }) {
                             <div className="absolute top-4 right-4">
                                 <FollowButton 
                                     userId={viewUser._id}
-                                    isFollowing={false} // This should be determined by the context
+                                    isFollowing={isFollowing}
                                 />
                             </div>
                         )}

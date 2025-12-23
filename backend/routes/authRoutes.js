@@ -1,5 +1,5 @@
 import express from 'express';
-import { register, login, updateProfile, getProfile, followUser, unfollowUser, getFollowingPosts, listUsers, likeTumblrPost, repostTumblrPost, getTumblrActions, unlikeTumblrPost, unrepostTumblrPost } from '../controllers/authController.js';
+import { register, login, updateProfile, getProfile, followUser, unfollowUser, getFollowingPosts, listUsers, getUserById, likeTumblrPost, repostTumblrPost, getTumblrActions, unlikeTumblrPost, unrepostTumblrPost } from '../controllers/authController.js';
 import { protect } from '../middlewares/authMiddleware.js';
 import { uploadAvatar } from '../uploads/uploadController.js';
 
@@ -15,6 +15,7 @@ router.post('/follow/:id', protect, followUser);
 router.post('/unfollow/:id', protect, unfollowUser);
 router.get('/following/posts', protect, getFollowingPosts);
 router.get('/users', protect, listUsers);
+router.get('/users/:id', protect, getUserById);
 router.post('/like-tumblr', protect, likeTumblrPost);
 router.post('/repost-tumblr', protect, repostTumblrPost);
 router.get('/tumblr-actions', protect, getTumblrActions);

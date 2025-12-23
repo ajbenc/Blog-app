@@ -41,7 +41,7 @@ export default function ProfilePage() {
       setError(null);
       
       // Fetch the user details
-      axios.get(`${import.meta.env.VITE_API_URL}/api/users/${userId}`, {
+      axios.get(`${import.meta.env.VITE_API_URL}/api/auth/users/${userId}`, {
         headers: { Authorization: `Bearer ${token}` }
       })
       .then(response => {
