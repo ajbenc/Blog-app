@@ -93,6 +93,14 @@ BlogMaster is a feature-rich blogging platform that combines the best of social 
 
 ## 🚀 Getting Started
 
+### 📦 Quick Deploy (For Portfolio)
+
+**Want to deploy immediately?** → See [QUICK_DEPLOY.md](./QUICK_DEPLOY.md)
+
+**Estimated time**: 15 minutes to have it live!
+
+### 💻 Local Development
+
 ### Prerequisites
 
 Before you begin, ensure you have the following installed:
