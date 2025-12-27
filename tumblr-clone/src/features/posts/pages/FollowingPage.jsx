@@ -162,9 +162,9 @@ export default function FollowingPage() {
     };
 
     return (
-        <div className="max-w-4xl mx-auto p-4 flex flex-col md:flex-row gap-6">
+        <div className="max-w-4xl mx-auto px-2 sm:px-4 py-4 flex flex-col md:flex-row gap-6">
             {/* Main posts column */}
-            <div className="flex-1">
+            <div className="flex-1 min-w-0">
                 <h2 className="text-xl font-semibold mb-4">Following Feed</h2>
                 {loading ? (
                     <div className="space-y-4">

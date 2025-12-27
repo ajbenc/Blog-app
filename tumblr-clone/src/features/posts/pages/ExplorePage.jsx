@@ -42,18 +42,18 @@ export default function ExplorePage() {
   }, [token]);
   
   return (
-    <div className="max-w-4xl mx-auto p-4 flex flex-col md:flex-row gap-6">
+    <div className="max-w-4xl mx-auto px-2 sm:px-4 py-4 flex flex-col md:flex-row gap-6">
       {/* Main content */}
-      <div className="flex-1">
-        <h1 className="text-2xl font-bold mb-6">Explore</h1>
+      <div className="flex-1 min-w-0">
+        <h1 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">Explore</h1>
         
         {/* Tag selector */}
-        <div className="flex flex-wrap gap-2 mb-6">
+        <div className="flex flex-wrap gap-2 mb-4 sm:mb-6">
           {popularTags.map(tag => (
             <button
               key={tag}
               onClick={() => setSelectedTag(tag)}
-              className={`px-3 py-1 rounded-full border transition-all duration-200 ${
+              className={`px-2.5 sm:px-3 py-1 text-sm sm:text-base rounded-full border transition-all duration-200 ${
                 selectedTag === tag
                   ? "bg-[#303030] text-white border-[#404040]"
                   : "bg-[#252525] text-gray-300 border-[#2f2f2f] hover:border-[#363636]"
