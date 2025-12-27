@@ -33,9 +33,9 @@ export default function DashBoardPage () {
     }, [posts, tumblrPosts]);
 
     return(
-        <div className="max-w-4xl mx-auto p-4 flex gap-8">
+        <div className="max-w-4xl mx-auto px-2 sm:px-4 py-4 flex gap-8">
             {/* Sidebar */}
-            <aside className="w-64 hidden md:block">
+            <aside className="w-64 hidden lg:block">
                 <div className="bg-[#1a1a1a] rounded-lg shadow-lg p-4 mb-6 border border-[#2f2f2f] hover:border-[#363636] transition-colors">
                     <h2 className="text-lg font-bold mb-2 text-white">Explore</h2>
                     <div className="flex flex-wrap gap-2">
@@ -59,7 +59,7 @@ export default function DashBoardPage () {
             </aside>
             
             {/* Main Feed */}
-            <main className="flex-1">
+            <main className="flex-1 min-w-0">
                 <PostTypeBar /* addPost={addPost} (mutations will be added soon) */ />
                 
                 {loading && tumblrLoading ? (
