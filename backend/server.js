@@ -14,8 +14,7 @@ const app = express();
 const allowedOrigins = [
   'http://localhost:5173',
   'http://localhost:3000',
-  // Add your production Vercel URL here after deployment
-  // Example: 'https://blogmaster.vercel.app'
+  'https://blogmaster-ajbenc.vercel.app'
 ];
 
 // In production, you can also use environment variable
