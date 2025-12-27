@@ -5,12 +5,11 @@ import { useTumblrFeed } from "../tumblr/hooks/useTumblrFeed";
 import ProfileSettings from "./ProfileSettings.jsx";
 import UserPosts from "./UserPosts.jsx";
 import FollowButton from "../../components/buttons/FollowButton.jsx";
-import { FaPencilAlt, FaChevronRight, FaChevronLeft, FaCog } from "react-icons/fa";
+import { FaChevronLeft, FaCog } from "react-icons/fa";
 import { getAvatarUrl } from "../../utils/avatarUtils.js";
 
 export default function ProfilePage({ viewUser = null }) {
-    const { user, isUserFollowed } = useAuth();
-    const { token } = useAuth();
+    const { user, token, isUserFollowed } = useAuth();
     const { data: posts = [], isLoading: loading } = usePostsQuery(token);
     const { posts: tumblrPosts } = useTumblrFeed("staff.tumblr.com", { limit: 20 });
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
