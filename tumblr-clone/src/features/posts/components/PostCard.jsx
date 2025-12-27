@@ -8,6 +8,7 @@ import {
   useRepostPostMutation,
   useEditPostMutation
 } from "../../../hooks/usePostsQuery";
+import { getAvatarUrl } from "../../../utils/avatarUtils";
 import { FaHeart, FaRegCommentDots, FaRetweet, FaPencilAlt, FaTimes } from "react-icons/fa";
 
 function getTumblrSimState(postId) {
@@ -75,9 +76,9 @@ export default function PostCard({
         const alreadyReposted = sim.repostedBy?.includes(user?._id);
         const updated = {
           ...sim,
-          reposts: alreadyReposted ? sim.reposts : sim.reposts + 1,
+          reposts: alreadyReposted ? Math.max(0, sim.reposts - 1) : sim.reposts + 1,
           repostedBy: alreadyReposted
-            ? sim.repostedBy
+            ? sim.repostedBy.filter(id => id !== user?._id)
             : [...(sim.repostedBy || []), user?._id]
         };
         setSim(updated);
@@ -122,7 +123,7 @@ export default function PostCard({
 
     // Tumblr post user info
     const tumblrUser = isTumblr
-      ? { name: post.blog_name, avatar: post.blog?.avatar_url_64 || "https://ui-avatars.com/api/?name=" + encodeURIComponent(post.blog_name) }
+      ? { name: post.blog_name, avatar: getAvatarUrl(post.blog?.avatar_url_64, post.blog_name) }
       : post.user;
 
     // Tumblr post content
@@ -257,10 +258,11 @@ export default function PostCard({
             {/* Header with user info */}
             <div className="flex items-center mb-4">
               <img
-                src={tumblrUser.avatar || "https://ui-avatars.com/api/?name=" + encodeURIComponent(tumblrUser.name || "User")}
+                src={isTumblr ? tumblrUser.avatar : getAvatarUrl(tumblrUser?.avatar, tumblrUser?.name)}
                 alt="avatar"
                 className="w-10 h-10 rounded-full object-cover border-2 border-[#2f2f2f] group-hover:border-[#363636] transition-colors cursor-pointer"
                 onClick={() => !isTumblr && post.user?._id && navigate(`/profile/${post.user._id}`)}
+                onError={(e) => e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(tumblrUser?.name || 'User')}&background=random`}
               />
               <div className="ml-3">
                 <div 
@@ -355,7 +357,11 @@ export default function PostCard({
               </button>
               
               <button onClick={handleRepost} 
-                className="flex items-center space-x-2 hover:text-green-500 hover:scale-105 transition-all duration-200">
+                className={`flex items-center space-x-2 hover:scale-105 transition-all duration-200 ${
+                  (isTumblr ? sim.repostedBy?.includes(user?._id) : post.reposts.includes(user?._id))
+                    ? 'text-green-500'
+                    : 'hover:text-green-500'
+                }`}>
                 <FaRetweet />
                 <span>{isTumblr ? sim.reposts : (post.repostsCount ?? post.reposts.length)}</span>
               </button>
@@ -376,9 +382,10 @@ export default function PostCard({
                   {(isTumblr ? sim.comments : post.comments).map((c, i) => (
                     <div key={c._id || i} className="flex items-center space-x-2 p-2 rounded-lg bg-[#252525]">
                       <img
-                        src={c.user?.avatar || "https://ui-avatars.com/api/?name=" + encodeURIComponent(c.user?.name || "User")}
-                        alt="avatar"
+                        src={getAvatarUrl(c.user?.avatar, c.user?.name)}
+                        alt={c.user?.name || 'User'}
                         className="w-6 h-6 rounded-full border border-[#2f2f2f]"
+                        onError={(e) => e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(c.user?.name || 'User')}&background=random`}
                       />
                       <span className="font-medium text-white">{c.user?.name}</span>
                       <span className="text-gray-300">{c.text}</span>

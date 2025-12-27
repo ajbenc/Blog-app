@@ -111,11 +111,19 @@ export async function repostPost (req, res) {
         if (post.user.toString() === req.user.id.toString()) {
             return res.status(400).json({ message: "You cannot repost your own post." });
         }
-        if(!post.reposts.includes(req.user.id)) {
+        
+        // Toggle repost - if already reposted, unrepost it
+        const hasReposted = post.reposts.includes(req.user.id);
+        if (hasReposted) {
+            // Unrepost - remove from reposts array
+            post.reposts = post.reposts.filter(userId => userId.toString() !== req.user.id.toString());
+        } else {
+            // Repost - add to reposts array
             post.reposts.push(req.user.id);
-            await post.save();
-        } 
-        res.json({ reposts: post.reposts.length });
+        }
+        
+        await post.save();
+        res.json({ reposts: post.reposts, reposted: !hasReposted });
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: "Error reposting the post" });
