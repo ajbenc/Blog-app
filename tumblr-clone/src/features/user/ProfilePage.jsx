@@ -6,6 +6,7 @@ import ProfileSettings from "./ProfileSettings.jsx";
 import UserPosts from "./UserPosts.jsx";
 import FollowButton from "../../components/buttons/FollowButton.jsx";
 import { FaPencilAlt, FaChevronRight, FaChevronLeft, FaCog } from "react-icons/fa";
+import { getAvatarUrl } from "../../utils/avatarUtils.js";
 
 export default function ProfilePage({ viewUser = null }) {
     const { user, isUserFollowed } = useAuth();
@@ -109,9 +110,13 @@ export default function ProfilePage({ viewUser = null }) {
                         {/* Floating avatar */}
                         <div className="absolute left-1/2 transform -translate-x-1/2 bottom-[-56px] z-10">
                             <img
-                                src={displayUser.avatar || "https://ui-avatars.com/api/?name=" + encodeURIComponent(displayUser.name || "User")}
-                                alt="avatar"
+                                src={getAvatarUrl(displayUser.avatar, displayUser.name)}
+                                alt={displayUser.name || 'User'}
                                 className="w-28 h-28 rounded-full object-cover border-4 border-[#1a1a1a] shadow-lg"
+                                onError={(e) => {
+                                    // Fallback if the image fails to load
+                                    e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(displayUser.name || 'User')}&background=random&size=128`;
+                                }}
                             />
                         </div>
                     </div>

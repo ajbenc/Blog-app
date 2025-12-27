@@ -19,7 +19,7 @@ const userSchema = new mongoose.Schema({
   },
   avatar: {
     type: String,
-    default: 'https://example.com/default-avatar.png' // Default avatar URL
+    default: '' // Empty string - frontend will handle fallback to UI Avatars
   },
   profileBg: {
   type: String,
