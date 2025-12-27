@@ -30,7 +30,8 @@ export default function ExplorePage() {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(res => {
-        setUsers(res.data);
+        // Limit to 5 suggested users
+        setUsers(res.data.slice(0, 5));
       })
       .catch(err => {
         console.error("Error fetching users:", err);
