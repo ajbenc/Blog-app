@@ -10,33 +10,9 @@ dotenv.config();
 
 const app = express();
 
-// CORS Configuration for Development and Production
-const allowedOrigins = [
-  'http://localhost:5173',
-  'http://localhost:3000',
-  'https://blogmaster-ajbenc.vercel.app'
-];
-
-// In production, you can also use environment variable
-if (process.env.FRONTEND_URL) {
-  allowedOrigins.push(process.env.FRONTEND_URL);
-}
-
+// CORS Configuration - Simplified for production
 app.use(cors({
-  origin: function (origin, callback) {
-    console.log('Request from origin:', origin); // Debug log
-    
-    // Allow requests with no origin (mobile apps, curl, etc)
-    if (!origin) return callback(null, true);
-    
-    if (allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      console.log('Origin not allowed:', origin);
-      console.log('Allowed origins:', allowedOrigins);
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
+  origin: true, // Allow all origins temporarily
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
