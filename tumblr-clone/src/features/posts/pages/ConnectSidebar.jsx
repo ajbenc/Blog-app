@@ -61,8 +61,11 @@ export default function ConnectSidebar() {
                             <div className="flex items-center flex-1 min-w-0">
                                 <Link to={`/profile/${u._id}`} className="flex items-center flex-1 min-w-0">
                                     <img
-                                        src={u.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(u.name)}`}
+                                        src={getAvatarUrl(u.avatar, u.name)}
                                         alt={u.name}
+                                        onError={(e) => {
+                                            e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(u.name)}&background=1a1a1a&color=fff`;
+                                        }}
                                         className="w-10 h-10 rounded-full object-cover border-2 border-[#2f2f2f] group-hover:border-[#363636] transition-colors flex-shrink-0"
                                     />
                                     <span className="ml-3 text-[#ffffff] font-medium group-hover:text-blue-400 transition-colors truncate">
