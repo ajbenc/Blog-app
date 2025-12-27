@@ -5,6 +5,7 @@ import axios from "axios";
 import { FaUserPlus } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import FollowButton from "../../../components/buttons/FollowButton";
+import { getAvatarUrl } from "../../../utils/avatarUtils";
 
 export default function FollowingPage() {
     const { token, user } = useAuth();
@@ -220,9 +221,10 @@ export default function FollowingPage() {
                                     <Link to={`/profile/${followedUser._id}`} className="flex items-center flex-1">
                                         <div className="w-10 h-10 rounded-full overflow-hidden mr-3">
                                             <img 
-                                                src={followedUser.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(followedUser.name || 'User')}`} 
+                                                src={getAvatarUrl(followedUser.avatar, followedUser.name)} 
                                                 alt={followedUser.name || 'User'}
                                                 className="w-full h-full object-cover"
+                                                onError={(e) => e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(followedUser.name || 'User')}&background=random`}
                                             />
                                         </div>
                                         <div className="flex-1">

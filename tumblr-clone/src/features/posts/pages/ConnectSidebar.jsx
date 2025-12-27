@@ -3,6 +3,7 @@ import axios from "axios";
 import { useAuth } from "../../auth/hooks/useAuth";
 import FollowButton from "../../../components/buttons/FollowButton.jsx";
 import { Link } from "react-router-dom";
+import { getAvatarUrl } from "../../../utils/avatarUtils";
 
 export default function ConnectSidebar() {
     const { token, user } = useAuth();
