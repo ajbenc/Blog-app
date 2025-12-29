@@ -15,7 +15,6 @@
 </div>
 
 ---
-<img width="2559" height="1280" alt="Captura de pantalla 2025-12-23 145010" src="https://github.com/user-attachments/assets/1eb8590c-a3ed-4ee4-9478-35cd1553775e" />
 
 ## 📖 Overview
 
@@ -94,11 +93,6 @@ BlogMaster is a feature-rich blogging platform that combines the best of social 
 - **Multer** - File uploads
 
 ---
-
-<img width="2559" height="1278" alt="Captura de pantalla 2025-12-23 145114" src="https://github.com/user-attachments/assets/53a847d1-b88d-425e-919e-aa6e9f431820" />
-
-
-<img width="2559" height="1278" alt="Captura de pantalla 2025-12-23 145148" src="https://github.com/user-attachments/assets/135a2602-df2c-496a-8179-bc2535e48ebb" />
 
 
 ### 💻 Local Development
